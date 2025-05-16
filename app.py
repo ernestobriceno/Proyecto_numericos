@@ -16,6 +16,10 @@ def funcion_hipotesis_logistica(X_matrix_b, theta_vector):
         theta_vector = theta_vector.reshape(-1, 1)
     z = X_matrix_b @ theta_vector # Multiplicación de matrices: X_matrix_b * theta_vector
     return funcion_sigmoide(z)
+# --- Modelo de Regresión Logística (Donación de Sangre) ---
+theta_logistic = None
+scaler_logistic = None
+feature_names_logistic = None
 try:
     theta_logistic = np.load('theta_logistic.npy')
     scaler_logistic = joblib.load('scaler_logistic.joblib')
@@ -23,31 +27,7 @@ try:
         feature_names_logistic = json.load(f)
     print("Artefactos del modelo logístico cargados exitosamente.")
 except FileNotFoundError:
-    print("ERROR CRÍTICO: No se encontraron 'theta_logistic.npy', 'scaler_logistic.joblib' o 'feature_names_logistic.json'.")
+    print("ERROR CRÍTICO: Faltan archivos para el modelo logístico (theta_logistic.npy, scaler_logistic.joblib, o feature_names_logistic.json).")
     print("Asegúrate de haberlos guardado desde tu notebook y que estén en el mismo directorio que app.py.")
-    # Fallback para que la app no crashee al inicio
-    theta_logistic = None 
-    scaler_logistic = None
-    feature_names_logistic = ['Recency_months', 'Frequency_times', 'Time_months'] # Placeholder
 except Exception as e:
     print(f"Error al cargar artefactos logísticos: {e}")
-    theta_logistic = None
-    scaler_logistic = None
-    feature_names_logistic = ['Recency_months', 'Frequency_times', 'Time_months']
-    # --- Modelo de Regresión Lineal (Ganancias de Empresas) ---
-try:
-    theta_lineal = np.load('theta_lineal.npy')
-    mean_train_lineal = np.load('mean_train_lineal.npy')
-    std_train_lineal = np.load('std_train_lineal.npy')
-    with open('feature_names_lineal.json', 'r') as f:
-        feature_names_lineal = json.load(f)
-    print("Artefactos del modelo lineal (normalización manual) cargados exitosamente.")
-except FileNotFoundError:
-    print("ERROR CRÍTICO: No se encontraron 'theta_lineal.npy', 'mean_train_lineal.npy', 'std_train_lineal.npy' o 'feature_names_lineal.json'.")
-    print("Asegúrate de haberlos guardado desde tu notebook y que estén en el mismo directorio que app.py.")
-    theta_lineal = None
-    mean_train_lineal, std_train_lineal, feature_names_lineal = None, None, None
-except Exception as e:
-    print(f"Error al cargar artefactos lineales: {e}")
-    theta_lineal = None
-    mean_train_lineal, std_train_lineal, feature_names_lineal = None, None, None
