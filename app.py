@@ -3,16 +3,18 @@ import numpy as np
 import pandas as pd
 import joblib # Para cargar el scaler
 import json
-# FUNCIONES DEL MODELO DE REGRESIÓN LOGÍSTICA (necesarias para la predicción)
+
 def funcion_sigmoide(z):
-    z_clipped = np.clip(z, -500, 500) # Prevenir overflow/underflow
+    """Calcula la función sigmoide, evitando overflow/underflow."""
+    z_clipped = np.clip(z, -500, 500) 
     g = 1 / (1 + np.exp(-z_clipped))
     return g
 
 def funcion_hipotesis_logistica(X_matrix_b, theta_vector):
+    """Calcula las probabilidades predichas por la regresión logística."""
     if theta_vector.ndim == 1: # Asegurar que theta es un vector columna
         theta_vector = theta_vector.reshape(-1, 1)
-    z = X_matrix_b @ theta_vector # Multiplicación de matrices
+    z = X_matrix_b @ theta_vector # Multiplicación de matrices: X_matrix_b * theta_vector
     return funcion_sigmoide(z)
 try:
     theta_logistic = np.load('theta_logistic.npy')
