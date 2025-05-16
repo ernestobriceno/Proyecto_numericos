@@ -76,3 +76,46 @@ def predecir_donacion_logistica(recencia, frecuencia, tiempo):
         return f"{resultado_clase}\nProbabilidad de que sí done: {probabilidad_si_dona:.4f}"
     except Exception as e:
         return f"Error durante la predicción logística: {str(e)}"
+# --- Para Regresión Lineal ---
+def predecir_profit_lineal(rd_spend, administration, marketing_spend, state_input):
+    """Realiza una predicción de profit de empresa."""
+    if theta_lineal is None or mean_train_lineal is None or std_train_lineal is None or feature_names_lineal is None:
+        return "Error: Los artefactos del modelo lineal no se cargaron correctamente. Revisa la consola."
+    try:
+        # 1. Crear un diccionario para las entradas numéricas y las dummies de estado
+        # feature_names_lineal debe ser la lista de columnas usada para calcular mean_train_lineal y std_train_lineal
+        # Ejemplo: ['R&D Spend', 'Administration', 'Marketing Spend', 'State_Florida', 'State_New York']
+        
+        data_dict = {}
+        # Llenar con las features numéricas
+        data_dict['R&D Spend'] = rd_spend
+        data_dict['Administration'] = administration
+        data_dict['Marketing Spend'] = marketing_spend
+        
+        # Inicializar y establecer las variables dummy de estado
+        # Asume que 'California' fue el estado base (drop_first=True)
+        if 'State_Florida' in feature_names_lineal:
+            data_dict['State_Florida'] = 1.0 if state_input == "Florida" else 0.0
+        if 'State_New York' in feature_names_lineal:
+            data_dict['State_New York'] = 1.0 if state_input == "New York" else 0.0
+        # Si hay otras columnas dummy de estado en feature_names_lineal, inicialízalas a 0
+        for col_name in feature_names_lineal:
+            if col_name.startswith('State_') and col_name not in data_dict:
+                data_dict[col_name] = 0.0
+
+        # 2. Crear un DataFrame con las entradas en el ORDEN EXACTO de feature_names_lineal
+        input_df_lineal = pd.DataFrame([data_dict])[feature_names_lineal]
+        
+        # 3. Normalización manual Z-score
+        input_features_lineal_normalized_values = (input_df_lineal.values - mean_train_lineal) / std_train_lineal
+        
+        # 4. Añadir el término de intercepto
+        input_features_lineal_b = np.c_[np.ones((input_features_lineal_normalized_values.shape[0], 1)), input_features_lineal_normalized_values]
+        
+        # 5. Realizar la predicción de profit (función de hipótesis lineal: h_theta(X) = X @ theta)
+        profit_predicho = (input_features_lineal_b @ theta_lineal)[0,0]
+        
+        return f"Profit Predicho (Lineal): ${profit_predicho:,.2f}"
+        
+    except Exception as e:
+        return f"Error durante la predicción lineal: {str(e)}"
