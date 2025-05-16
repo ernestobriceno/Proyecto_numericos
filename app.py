@@ -1,9 +1,8 @@
 import gradio as gr
 import numpy as np
 import pandas as pd
-import joblib
+import joblib # Para cargar el scaler
 import json
-
 # FUNCIONES DEL MODELO DE REGRESIÓN LOGÍSTICA (necesarias para la predicción)
 def funcion_sigmoide(z):
     z_clipped = np.clip(z, -500, 500) # Prevenir overflow/underflow
