@@ -31,3 +31,30 @@ except FileNotFoundError:
     print("Asegúrate de haberlos guardado desde tu notebook y que estén en el mismo directorio que app.py.")
 except Exception as e:
     print(f"Error al cargar artefactos logísticos: {e}")
+# --- Para Regresión Logística ---
+def predecir_donacion_logistica(recencia, frecuencia, tiempo):
+    """Realiza una predicción de donación de sangre."""
+    if theta_logistic is None or scaler_logistic is None or feature_names_logistic is None:
+        return "Error: Los artefactos del modelo logístico no se cargaron correctamente. Revisa la consola."
+    try:
+        # 1. Crear DataFrame con las entradas del usuario en el orden correcto
+        # feature_names_logistic debe ser ['Recency_months', 'Frequency_times', 'Time_months']
+        input_data = pd.DataFrame([[recencia, frecuencia, tiempo]], columns=feature_names_logistic)
+        
+        # 2. Escalar las características
+        input_features_scaled = scaler_logistic.transform(input_data)
+        
+        # 3. Añadir el término de intercepto (columna de unos al principio)
+        input_features_b = np.c_[np.ones((input_features_scaled.shape[0], 1)), input_features_scaled]
+        
+        # 4. Realizar la predicción de probabilidad
+        probabilidad = funcion_hipotesis_logistica(input_features_b, theta_logistic)
+        probabilidad_si_dona = probabilidad[0,0] # Extraer el valor escalar
+        
+        # 5. Convertir probabilidad a clase
+        clase_predicha = 1 if probabilidad_si_dona >= 0.5 else 0
+        resultado_clase = "Sí Donará (Clase 1)" if clase_predicha == 1 else "No Donará (Clase 0)"
+        
+        return f"{resultado_clase}\nProbabilidad de que sí done: {probabilidad_si_dona:.4f}"
+    except Exception as e:
+        return f"Error durante la predicción logística: {str(e)}"
