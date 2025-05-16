@@ -31,6 +31,24 @@ except FileNotFoundError:
     print("Asegúrate de haberlos guardado desde tu notebook y que estén en el mismo directorio que app.py.")
 except Exception as e:
     print(f"Error al cargar artefactos logísticos: {e}")
+
+# --- Modelo de Regresión Lineal (Ganancias de Empresas) ---
+theta_lineal = None
+mean_train_lineal = None
+std_train_lineal = None
+feature_names_lineal = None
+try:
+    theta_lineal = np.load('theta_lineal.npy')
+    mean_train_lineal = np.load('mean_train_lineal.npy')
+    std_train_lineal = np.load('std_train_lineal.npy')
+    with open('feature_names_lineal.json', 'r') as f:
+        feature_names_lineal = json.load(f)
+    print("Artefactos del modelo lineal (normalización manual) cargados exitosamente.")
+except FileNotFoundError:
+    print("ERROR CRÍTICO: Faltan archivos para el modelo lineal (theta_lineal.npy, mean_train_lineal.npy, std_train_lineal.npy, o feature_names_lineal.json).")
+    print("Asegúrate de haberlos guardado desde tu notebook y que estén en el mismo directorio que app.py.")
+except Exception as e:
+    print(f"Error al cargar artefactos lineales: {e}")
 # --- Para Regresión Logística ---
 def predecir_donacion_logistica(recencia, frecuencia, tiempo):
     """Realiza una predicción de donación de sangre."""
