@@ -180,3 +180,5 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo_combinada:
                 inputs=[input_rd_spend, input_admin_spend, input_marketing_spend, input_estado_lineal],
                 outputs=output_lineal
             )
+if __name__ == "__main__":
+    demo_combinada.launch(debug=True) 
