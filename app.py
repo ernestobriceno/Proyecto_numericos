@@ -119,3 +119,64 @@ def predecir_profit_lineal(rd_spend, administration, marketing_spend, state_inpu
         
     except Exception as e:
         return f"Error durante la predicción lineal: {str(e)}"
+
+with gr.Blocks(theme=gr.themes.Soft()) as demo_combinada:
+    gr.Markdown("# Proyecto Análisis Numérico: Modelos Predictivos")
+    gr.Markdown("Selecciona el modelo y proporciona las entradas para obtener una predicción.")
+
+    with gr.Tabs():
+        with gr.TabItem("🩸 Regresión Logística (Predicción de Donación de Sangre)"):
+            gr.Markdown("### Ingresa los datos del donante:")
+            with gr.Row():
+                input_recencia = gr.Number(label="Recencia (meses desde última donación)", value=2)
+                input_frecuencia = gr.Number(label="Frecuencia (número total de donaciones)", value=3)
+                input_tiempo = gr.Number(label="Tiempo (meses desde primera donación)", value=10)
+            
+            output_logistica = gr.Textbox(label="Resultado de la Predicción (Logística)")
+            btn_logistica = gr.Button("Predecir Donación")
+            btn_logistica.click(
+                predecir_donacion_logistica, 
+                inputs=[input_recencia, input_frecuencia, input_tiempo], 
+                outputs=output_logistica
+            )
+            gr.Examples(
+                examples=[
+                    [2, 3, 10], 
+                    [2, 15, 30], 
+                    [23, 1, 23] 
+                ],
+                inputs=[input_recencia, input_frecuencia, input_tiempo],
+                outputs=output_logistica 
+            )
+
+        with gr.TabItem("📈 Regresión Lineal (Predicción de Profit de Empresas)"):
+            gr.Markdown("### Ingresa los datos de la empresa:")
+            with gr.Row():
+                input_rd_spend = gr.Number(label="Gasto en I+D (R&D Spend)", value=100000)
+                input_admin_spend = gr.Number(label="Gasto en Administración", value=120000)
+            with gr.Row():
+                input_marketing_spend = gr.Number(label="Gasto en Marketing", value=250000)
+                # Asegúrate que estas opciones coincidan con cómo entrenaste tu modelo lineal
+                # (considerando drop_first, si es el caso, el estado base no aparecería aquí como opción si no tiene columna dummy)
+                input_estado_lineal = gr.Dropdown(
+                    label="Estado de la Empresa", 
+                    choices=["California", "New York", "Florida"], 
+                    value="California" 
+                )
+            
+            output_lineal = gr.Textbox(label="Resultado de la Predicción (Lineal)")
+            btn_lineal = gr.Button("Predecir Profit")
+            btn_lineal.click(
+                predecir_profit_lineal, 
+                inputs=[input_rd_spend, input_admin_spend, input_marketing_spend, input_estado_lineal], 
+                outputs=output_lineal
+            )
+            gr.Examples(
+                examples=[
+                    [160000, 130000, 470000, "New York"],
+                    [20000, 80000, 100000, "California"],
+                    [75000, 100000, 200000, "Florida"]
+                ],
+                inputs=[input_rd_spend, input_admin_spend, input_marketing_spend, input_estado_lineal],
+                outputs=output_lineal
+            )
